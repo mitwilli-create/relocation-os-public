@@ -1,0 +1,19 @@
+{
+  "name": "relocation-kb-mcp",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Scoped, read-only MCP server exposing the Relocation OS knowledge base (knowledge/ + tracked memory/) via search_claims, read_claim, list_topics.",
+  "engines": {
+    "node": ">=23.6"
+  },
+  "scripts": {
+    "start": "node src/index.ts",
+    "selftest": "node test/selftest.ts && node test/symlink-test.ts && node test/tracked-test.ts"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "@vscode/ripgrep": "^1.15.9",
+    "zod": "^3.25.0"
+  }
+}

@@ -1,0 +1,31 @@
+language: "en-US"
+reviews:
+  profile: "assertive"
+  high_level_summary: true
+  poem: false
+  request_changes_workflow: false
+  auto_review:
+    enabled: true
+    drafts: false
+  path_instructions:
+    - path: "memory/**"
+      instructions: >-
+        This directory is a tiered memory system for an agentic harness.
+        Flag any file that appears to contain personal data (salary figures,
+        health or identity details, political reasoning) since personal data
+        belongs only in memory/private/, which is gitignored and should never
+        appear in a PR. Also flag Tier 1 (MEMORY.md) growth beyond roughly
+        400 tokens.
+    - path: "CLAUDE.md"
+      instructions: >-
+        Canonical harness contract. If this file changes, verify AGENTS.md
+        changed consistently in the same PR.
+    - path: "AGENTS.md"
+      instructions: >-
+        Mirror of CLAUDE.md. Flag any rule that contradicts CLAUDE.md.
+    - path: "scripts/**"
+      instructions: >-
+        Scripts must be idempotent and safe to run standalone. Flag any
+        non-deterministic behavior or missing error handling.
+chat:
+  auto_reply: true

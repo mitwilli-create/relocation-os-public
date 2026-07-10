@@ -1,0 +1,15 @@
+{
+  "_description": "Golden structured output for step 0 (the only deterministic step). The runner extracts {option: {total_days, verdict}} from any step-0 file and deep-compares against the entry matching its frontmatter 'mission'. Prose and formatting are free to change; these numbers and verdicts are not. Row 29 (diff structured outputs) tempered by Row 30 (invariants over transcripts).",
+  "fixture": {
+    "A": { "total_days": 9, "verdict": "PASS" },
+    "B": { "total_days": 10, "verdict": "PASS" },
+    "C": { "total_days": 12, "verdict": "FAIL" },
+    "D": { "total_days": 11, "verdict": "FAIL" }
+  },
+  "2026-07-scouting-trip": {
+    "A": { "total_days": 10, "verdict": "PASS" },
+    "B": { "total_days": 9, "verdict": "PASS" },
+    "C": { "total_days": 10, "verdict": "PASS" },
+    "D": { "total_days": 11, "verdict": "FAIL" }
+  }
+}

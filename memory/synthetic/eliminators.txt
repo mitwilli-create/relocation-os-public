@@ -1,0 +1,9 @@
+# SYNTHETIC TWIN eliminated locations (registry L1). Fictional example data.
+# Mirrors memory/private/eliminators.txt. One location per line; # comments and
+# blank lines ignored. Read at runtime by scripts/constraint-gate.mjs when copied
+# into memory/private/. Reasoning lives in memory/synthetic/personal-context.md.
+# Both accented and unaccented spellings listed so the gate catches either.
+Zaragoza
+Murcia
+Alicante
+Alacant

@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "relocation-kb": {
+      "command": "node",
+      "args": ["mcp/relocation-kb/src/index.ts"]
+    }
+  }
+}

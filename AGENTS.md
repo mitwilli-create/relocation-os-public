@@ -1,0 +1,12 @@
+# Relocation OS: Harness Contract (Codex and other agents)
+
+This file mirrors [CLAUDE.md](CLAUDE.md), which is the canonical contract. Read CLAUDE.md and follow it exactly. Summary of the non-negotiables:
+
+1. **Load order:** `memory/MEMORY.md` first, Tier 2 memory files only on topic match, never bulk-load `memory/`. When the `relocation-kb` MCP server is connected, prefer its read-only tools (`search_claims`, `read_claim`, `list_topics`) over opening `knowledge/` or `memory/` files directly; the tools never expose `memory/private/` (ADR-0005).
+2. **Locked decisions:** consult `memory/constraints.md` before acting; never re-litigate registry entries; surface conflicts instead of proceeding.
+3. **Missions and skills:** work inside `missions/<name>/pipeline.md` order; solve constraint math before recommendations. Reusable skills live at `skills/<name>/SKILL.md` (canonical), discovered by Codex via committed `.agents/skills/` symlinks and by Claude Code via `.claude/skills/`; deterministic logic is a backing `scripts/<name>.mjs` (`mission-runner`, `constraint-gate`, `award-watch`, `city-dossier`, `sanitize-for-portfolio`). Skills surface conflicts and enforce gates; they never resolve a locked decision (ADR-0006). `award-watch` monitors award options and refuses any book request (it has no booking path; L3/L7 gate any real redemption); `city-dossier` reads only the `relocation-kb` served scope, never `memory/private/`; `sanitize-for-portfolio` builds the public cut (tracked files only, synthetic twin for the private corpus) and scans it with the full marker list, failing on any hit and refusing on a missing marker source, never pushing (ADR-0007).
+4. **Council:** mission and standing roles in `council/roles.md`; raw research to `knowledge/research/`; only adjudicated claims enter memory or the KB.
+5. **Determinism:** structured outputs only, attributed claims, idempotent scripts.
+6. **SDLC:** ADR before non-trivial change, branch + PR, CodeRabbit findings addressed before merge, verify before done. Evals gate merge in CI: mission outputs must conform to `evals/schemas/` and pass `node scripts/run-evals.mjs` (ADR-0003).
+7. **Privacy quarantine:** `memory/private/` is gitignored; its contents never appear in tracked files, commits, or PR text.
+8. **Style:** conclusions first, plain language, no em dashes in tracked files (sole exception: verbatim research archives under `knowledge/research/`), quantified uncertainty.

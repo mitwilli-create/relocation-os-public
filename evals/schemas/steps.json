@@ -1,0 +1,135 @@
+{
+  "_description": "Machine-checkable encoding of pipeline.md's 'Done when' column and the standing flags. The human prose in pipeline.md and council/roles.md stays the source of truth; when they change, this file changes in the same PR. Keys starting with underscore are ignored by the runner.",
+  "_invariant_types": "present = pattern must match the body; absent = pattern must NOT match; count = pattern must match exactly 'count' times (or at least 'min'); first_h2 = the first '## ' heading must match the pattern (conclusions first, coordination rule 3).",
+  "common": {
+    "_why": "pipeline.md 'Standing flags (attach to every output)' block.",
+    "invariants": [
+      {
+        "name": "standing-flag-cat-sitting",
+        "type": "present",
+        "pattern": "[Cc]at-sitting[^\\n]*UNRESOLVED[^\\n]*L3",
+        "why": "Registry L3: blocking prerequisite, flagged on every output"
+      },
+      {
+        "name": "standing-flag-90-day",
+        "type": "present",
+        "pattern": "90 days?",
+        "why": "Standing flag 2: facts older than 90 days re-verify before use"
+      },
+      {
+        "name": "no-em-dash",
+        "type": "absent",
+        "pattern": "\\u2014",
+        "why": "CLAUDE.md style rule: no em dashes in tracked files"
+      }
+    ]
+  },
+  "steps": {
+    "0": {
+      "slug": "00-constraint-math",
+      "class": "gate",
+      "owner": "Orchestrator",
+      "required_sections": ["Verdict", "Option A", "Option B", "Option C", "Option D", "Standing flags"],
+      "golden": "evals/golden/00-constraint-math.expected.json",
+      "invariants": [
+        { "name": "first-h2-is-verdict", "type": "first_h2", "pattern": "Verdict", "why": "Conclusions first" },
+        { "name": "day-totals-per-option", "type": "count", "pattern": "Total days: \\d+", "min": 4, "why": "Done when: each option shows day-by-day count" },
+        { "name": "ceiling-verdicts-per-option", "type": "count", "pattern": "(PASS|FAIL) vs 10-day ceiling", "min": 4, "why": "Registry L2: 10-day ceiling, travel days included" }
+      ]
+    },
+    "1": {
+      "slug": "01-city-recommendation",
+      "class": "gate",
+      "owner": "Roles 3+5 joint, orchestrator synthesis",
+      "required_sections": ["Recommendation", "Runner-up", "Standing flags"],
+      "invariants": [
+        { "name": "first-h2-is-recommendation", "type": "first_h2", "pattern": "Recommendation", "why": "Conclusions first" },
+        { "name": "exactly-one-recommendation", "type": "count", "pattern": "^## Recommendation", "flags": "m", "count": 1, "why": "Coordination rule 2: one pick, never a menu" },
+        { "name": "exactly-one-runner-up", "type": "count", "pattern": "^## Runner-up", "flags": "m", "count": 1, "why": "Done when: one pick, one runner-up" },
+        { "name": "seasonal-validity-scores", "type": "count", "pattern": "\\b(HIGH|MEDIUM|LOW)\\b", "min": 2, "why": "Done when: seasonal-validity score for each candidate" }
+      ]
+    },
+    "2": {
+      "slug": "02-miles-vs-cash",
+      "class": "role-output",
+      "booking_adjacent": true,
+      "owner": "Roles 1+2",
+      "required_sections": ["Conclusion", "Sources", "Standing flags"],
+      "invariants": [
+        { "name": "first-h2-is-conclusion", "type": "first_h2", "pattern": "Conclusion", "why": "Coordination rule 5: single joint conclusion" },
+        { "name": "exactly-one-conclusion", "type": "count", "pattern": "^## Conclusion", "flags": "m", "count": 1, "why": "Done when: single conclusion" },
+        { "name": "breakeven-shown", "type": "present", "pattern": "\\d+(\\.\\d+)?\\s*cents per mile", "why": "Done when: cents-per-mile breakeven shown" },
+        { "name": "registry-routing-consulted", "type": "present", "pattern": "\\bL[45]\\b", "why": "Registry L4/L5: miles preference and hub-avoidance rules consulted" }
+      ]
+    },
+    "3": {
+      "slug": "03-weather",
+      "class": "role-output",
+      "owner": "Role 3",
+      "required_sections": ["Sources", "Standing flags"],
+      "invariants": [
+        { "name": "temps-shown", "type": "present", "pattern": "\\u00b0[FC]", "why": "Done when: temps" },
+        { "name": "rain-covered", "type": "present", "pattern": "[Rr]ain", "why": "Done when: rain" },
+        { "name": "validity-rating", "type": "present", "pattern": "\\b(HIGH|MEDIUM|LOW)\\b", "why": "Done when: validity rating" }
+      ]
+    },
+    "4": {
+      "slug": "04-hotels",
+      "class": "role-output",
+      "booking_adjacent": true,
+      "owner": "Role 4",
+      "required_sections": ["Sources", "Standing flags"],
+      "invariants": [
+        { "name": "rate-shown", "type": "present", "pattern": "\\$\\d", "why": "Done when: named properties with rates" },
+        { "name": "urgency-flag", "type": "present", "pattern": "[Uu]rgency", "why": "Done when: urgency flags" }
+      ]
+    },
+    "5": {
+      "slug": "05-relocation-intel",
+      "class": "role-output",
+      "owner": "Role 5",
+      "required_sections": ["Sources", "Standing flags"],
+      "invariants": [
+        { "name": "dnv-update", "type": "present", "pattern": "DNV", "why": "Done when: current-year DNV update sweep" },
+        { "name": "beckham-update", "type": "present", "pattern": "Beckham", "why": "Done when: current-year Beckham update sweep" },
+        { "name": "current-year-dated", "type": "present", "pattern": "\\b2026\\b", "why": "Role 5 contract: current-year regulatory updates" }
+      ]
+    },
+    "6": {
+      "slug": "06-local-guide",
+      "class": "role-output",
+      "owner": "Role 6",
+      "required_sections": ["Sources", "Standing flags"],
+      "invariants": [
+        { "name": "is-this-home-test", "type": "present", "pattern": "[Ii]s.this.home test", "why": "Done when: the definitive is-this-home test" }
+      ]
+    },
+    "7": {
+      "slug": "07-denver",
+      "class": "role-output",
+      "booking_adjacent": true,
+      "owner": "Role 4 + orchestrator",
+      "required_sections": ["Standing flags"],
+      "invariants": [
+        { "name": "references-constraint-math", "type": "present", "pattern": "00-constraint-math", "why": "Pipeline: conditional on Step 0 outcome; must cite it" }
+      ]
+    },
+    "8": {
+      "slug": "08-next-action",
+      "class": "next-action",
+      "owner": "Orchestrator",
+      "required_sections": ["Action", "Standing flags"],
+      "invariants": [
+        { "name": "first-h2-is-action", "type": "first_h2", "pattern": "Action", "why": "Conclusions first" },
+        { "name": "exactly-one-action", "type": "count", "pattern": "^## Action$", "flags": "m", "count": 1, "why": "Done when: exactly one action" },
+        { "name": "five-w-where", "type": "present", "pattern": "WHERE:", "why": "Done when: 5-W formatted" },
+        { "name": "five-w-what", "type": "present", "pattern": "WHAT:", "why": "Done when: 5-W formatted" },
+        { "name": "five-w-why", "type": "present", "pattern": "WHY:", "why": "Done when: 5-W formatted" },
+        { "name": "five-w-verify", "type": "present", "pattern": "VERIFY:", "why": "Done when: 5-W formatted" },
+        { "name": "five-w-recover", "type": "present", "pattern": "RECOVER:", "why": "Done when: 5-W formatted" },
+        { "name": "links-gate-0", "type": "present", "pattern": "00-constraint-math", "why": "Gate ordering: action rests on gate outputs" },
+        { "name": "links-gate-1", "type": "present", "pattern": "01-city-recommendation", "why": "Gate ordering: action rests on gate outputs" }
+      ]
+    }
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "_description": "Common frontmatter contract for every mission output file (missions/*/outputs/NN-slug.md) and every eval fixture. Frontmatter is flat 'key: value' lines between two '---' fences; no nesting, no YAML lists, so the runner parses it without a YAML library.",
+  "required": {
+    "mission": {
+      "pattern": "^[a-z0-9][a-z0-9-]*$",
+      "why": "Ties the output to its missions/ folder; 'fixture' for eval fixtures."
+    },
+    "step": {
+      "pattern": "^[0-8]$",
+      "why": "Selects which entry in steps.json governs this file."
+    },
+    "owner": {
+      "pattern": "^.+$",
+      "why": "Must match the pipeline Owner column for the step (determinism rule: orchestration order lives in pipeline.md, not agent judgment)."
+    },
+    "date": {
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+      "why": "Anchor for the 90-day source-freshness check. Absolute dates, never relative."
+    }
+  },
+  "optional": {
+    "expect_fail": {
+      "pattern": "^[a-z0-9-]+$",
+      "why": "Broken fixtures only: names the single check this fixture must fail. The self-test fails CI if the named check passes."
+    }
+  }
+}

@@ -1,0 +1,36 @@
+# Merge-blocking gates (ADR-0003, ADR-0005, ADR-0006). Runs the exact commands used
+# locally, in fail-fast order: privacy first (cheapest, most important), then schemas,
+# then the full eval suite with fixture self-test, then the Module 4 skills self-test,
+# then the MCP server security self-test. Only the last step installs dependencies,
+# scoped to mcp/relocation-kb.
+name: checks
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  gates:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
+        with:
+          node-version: '24'
+      - name: Privacy gate
+        run: bash scripts/privacy-check.sh
+      - name: Schema validation
+        run: node scripts/run-evals.mjs --schemas-only
+      - name: Evals
+        run: node scripts/run-evals.mjs
+      - name: Skills self-test
+        run: node scripts/skills-selftest.mjs
+      - name: MCP server self-test
+        working-directory: mcp/relocation-kb
+        run: |
+          npm ci --no-audit --no-fund
+          npm run selftest
